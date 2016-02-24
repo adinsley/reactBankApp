@@ -164,6 +164,7 @@
 	
 	    return filteredAccounts;
 	  },
+	
 	  totalCash: function totalCash(type) {
 	    var total = 0;
 	    var _iteratorNormalCompletion3 = true;
@@ -195,7 +196,77 @@
 	  },
 	  accountAverage: function accountAverage() {
 	    return this.totalCash() / this.accounts.length;
+	  },
+	
+	  payInterest: function payInterest() {
+	    var _iteratorNormalCompletion4 = true;
+	    var _didIteratorError4 = false;
+	    var _iteratorError4 = undefined;
+	
+	    try {
+	      for (var _iterator4 = this.accounts[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+	        var account = _step4.value;
+	
+	        account.amount += account.amount * 0.1;
+	      }
+	    } catch (err) {
+	      _didIteratorError4 = true;
+	      _iteratorError4 = err;
+	    } finally {
+	      try {
+	        if (!_iteratorNormalCompletion4 && _iterator4.return) {
+	          _iterator4.return();
+	        }
+	      } finally {
+	        if (_didIteratorError4) {
+	          throw _iteratorError4;
+	        }
+	      }
+	    }
+	  },
+	
+	  deleteAccount: function deleteAccount(holderName) {
+	    console.log("holderName in BankModel=", holderName);
+	    var newArray = this.accounts.filter(function (account) {
+	      if (account.owner !== holderName) {
+	        return account;
+	      }
+	    });
+	    this.accounts = newArray;
+	    return this.accounts;
+	  },
+	
+	  updateDetails: function updateDetails(holderName, details) {
+	    var _iteratorNormalCompletion5 = true;
+	    var _didIteratorError5 = false;
+	    var _iteratorError5 = undefined;
+	
+	    try {
+	      for (var _iterator5 = this.accounts[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+	        var account = _step5.value;
+	
+	        if (account.owner == holderName) {
+	          account.details = details;
+	        }
+	      }
+	    } catch (err) {
+	      _didIteratorError5 = true;
+	      _iteratorError5 = err;
+	    } finally {
+	      try {
+	        if (!_iteratorNormalCompletion5 && _iterator5.return) {
+	          _iterator5.return();
+	        }
+	      } finally {
+	        if (_didIteratorError5) {
+	          throw _iteratorError5;
+	        }
+	      }
+	    }
+	
+	    return this.accounts;
 	  }
+	
 	};
 	
 	module.exports = Bank;
@@ -210,6 +281,7 @@
 	  this.owner = params.owner;
 	  this.amount = params.amount;
 	  this.type = params.type;
+	  this.details = "";
 	};
 	
 	module.exports = Account;
@@ -221,23 +293,23 @@
 	module.exports = [
 	  { "owner": "jay",
 	    "amount": 125.50,
-	    "type": "personal"
+	    "type": "Personal"
 	  },
 	  { "owner": "val",
 	    "amount": 55125.10,
-	    "type": "personal"
+	    "type": "Personal"
 	  },
 	  { "owner": "marc",
 	    "amount": 400.00,
-	    "type": "personal"
+	    "type": "Personal"
 	  },
 	  { "owner": "keith",
 	    "amount": 220.25,
-	    "type": "business"
+	    "type": "Business"
 	  },
 	  { "owner": "rick",
 	    "amount": 100000.00,
-	    "type": "business"
+	    "type": "Business"
 	  }
 	]
 
@@ -250,42 +322,80 @@
 	var React = __webpack_require__(5);
 	var sampleAccounts = __webpack_require__(3);
 	var Bank = __webpack_require__(1);
+	var Account = __webpack_require__(2);
+	
+	var AccountSelect = __webpack_require__(163);
+	var AccountsList = __webpack_require__(164);
+	
+	var bank = new Bank();
+	var _iteratorNormalCompletion = true;
+	var _didIteratorError = false;
+	var _iteratorError = undefined;
+	
+	try {
+	  for (var _iterator = sampleAccounts[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	    var account = _step.value;
+	
+	    var newAccount = new Account(account);
+	    bank.addAccount(newAccount);
+	  }
+	} catch (err) {
+	  _didIteratorError = true;
+	  _iteratorError = err;
+	} finally {
+	  try {
+	    if (!_iteratorNormalCompletion && _iterator.return) {
+	      _iterator.return();
+	    }
+	  } finally {
+	    if (_didIteratorError) {
+	      throw _iteratorError;
+	    }
+	  }
+	}
 	
 	var BankBox = React.createClass({
 	  displayName: 'BankBox',
 	
 	  getInitialState: function getInitialState() {
-	    return { accounts: sampleAccounts };
+	    return { accounts: sampleAccounts, type: "All" };
+	  },
+	
+	  changeAccountType: function changeAccountType(newtype) {
+	    this.setState({ type: newtype });
+	  },
+	
+	  getAccountType: function getAccountType() {
+	    return this.state.accounts.reduce(function (typeArray, account) {
+	      if (!typeArray.includes(account.type)) {
+	        typeArray.push(account.type);
+	      }
+	      return typeArray;
+	    }, ["All"]);
+	  },
+	
+	  filterAccounts: function filterAccounts() {
+	    if (this.state.type == "All") {
+	      return this.state.accounts;
+	    } else {
+	      return bank.filteredAccounts(this.state.type);
+	    }
+	  },
+	
+	  buttonClick: function buttonClick() {
+	    bank.payInterest();
+	    this.setState({ accounts: bank.accounts });
+	  },
+	
+	  deleteAccount: function deleteAccount(e) {
+	    this.setState({ accounts: bank.deleteAccount(e) });
+	  },
+	
+	  updateDetails: function updateDetails(holderName, details) {
+	    this.setState({ accounts: bank.updateDetails(holderName, details) });
 	  },
 	
 	  render: function render() {
-	    var bank = new Bank();
-	
-	    var _iteratorNormalCompletion = true;
-	    var _didIteratorError = false;
-	    var _iteratorError = undefined;
-	
-	    try {
-	      for (var _iterator = this.state.accounts[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-	        var account = _step.value;
-	
-	        bank.addAccount(account);
-	      }
-	    } catch (err) {
-	      _didIteratorError = true;
-	      _iteratorError = err;
-	    } finally {
-	      try {
-	        if (!_iteratorNormalCompletion && _iterator.return) {
-	          _iterator.return();
-	        }
-	      } finally {
-	        if (_didIteratorError) {
-	          throw _iteratorError;
-	        }
-	      }
-	    }
-	
 	    return React.createElement(
 	      'div',
 	      null,
@@ -295,12 +405,12 @@
 	        'React BankBox'
 	      ),
 	      React.createElement(
-	        'h2',
-	        null,
-	        'Total: ',
-	        bank.totalCash(),
-	        ' '
-	      )
+	        'button',
+	        { onClick: this.buttonClick },
+	        'Pay Interest'
+	      ),
+	      React.createElement(AccountSelect, { types: this.getAccountType(), changeAccountType: this.changeAccountType }),
+	      React.createElement(AccountsList, { type: this.state.type, accounts: this.filterAccounts(), deleteAccount: this.deleteAccount, updateDetails: this.updateDetails })
 	    );
 	  }
 	
@@ -19908,6 +20018,288 @@
 	
 	module.exports = __webpack_require__(7);
 
+
+/***/ },
+/* 163 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(5);
+	
+	var AccountSelect = React.createClass({
+	  displayName: 'AccountSelect',
+	
+	
+	  createOption: function createOption(type) {
+	    return React.createElement(
+	      'option',
+	      { id: type, value: type },
+	      type
+	    );
+	  },
+	
+	  handleChange: function handleChange(e) {
+	    var newType = e.target.value;
+	    this.props.changeAccountType(newType);
+	  },
+	
+	  render: function render() {
+	
+	    return React.createElement(
+	      'div',
+	      null,
+	      React.createElement(
+	        'select',
+	        { onChange: this.handleChange },
+	        this.props.types.map(this.createOption)
+	      )
+	    );
+	  }
+	
+	});
+	
+	module.exports = AccountSelect;
+
+/***/ },
+/* 164 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(5);
+	var Bank = __webpack_require__(1);
+	var AccountDisplay = __webpack_require__(165);
+	
+	var AccountsList = React.createClass({
+	  displayName: 'AccountsList',
+	
+	
+	  getInitialState: function getInitialState() {
+	    return { selectedHolder: null };
+	  },
+	
+	  createRow: function createRow(account) {
+	    return React.createElement(
+	      'tr',
+	      null,
+	      React.createElement(
+	        'td',
+	        null,
+	        account.owner
+	      ),
+	      React.createElement(
+	        'td',
+	        null,
+	        React.createElement(
+	          'button',
+	          { onClick: this.handleClick, id: account.owner, value: account.owner },
+	          'See Info'
+	        )
+	      )
+	    );
+	  },
+	
+	  findAccount: function findAccount() {
+	    var _iteratorNormalCompletion = true;
+	    var _didIteratorError = false;
+	    var _iteratorError = undefined;
+	
+	    try {
+	      for (var _iterator = this.props.accounts[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	        var account = _step.value;
+	
+	        if (account.owner == this.state.selectedHolder) {
+	          return account;
+	        }
+	      }
+	    } catch (err) {
+	      _didIteratorError = true;
+	      _iteratorError = err;
+	    } finally {
+	      try {
+	        if (!_iteratorNormalCompletion && _iterator.return) {
+	          _iterator.return();
+	        }
+	      } finally {
+	        if (_didIteratorError) {
+	          throw _iteratorError;
+	        }
+	      }
+	    }
+	  },
+	
+	  handleClick: function handleClick(e) {
+	    this.setState({ selectedHolder: e.target.value });
+	  },
+	
+	  render: function render() {
+	    var filteredBank = new Bank();
+	    var _iteratorNormalCompletion2 = true;
+	    var _didIteratorError2 = false;
+	    var _iteratorError2 = undefined;
+	
+	    try {
+	      for (var _iterator2 = this.props.accounts[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+	        var account = _step2.value;
+	
+	        filteredBank.addAccount(account);
+	      }
+	    } catch (err) {
+	      _didIteratorError2 = true;
+	      _iteratorError2 = err;
+	    } finally {
+	      try {
+	        if (!_iteratorNormalCompletion2 && _iterator2.return) {
+	          _iterator2.return();
+	        }
+	      } finally {
+	        if (_didIteratorError2) {
+	          throw _iteratorError2;
+	        }
+	      }
+	    }
+	
+	    return React.createElement(
+	      'div',
+	      null,
+	      React.createElement(
+	        'h1',
+	        null,
+	        this.props.type,
+	        ' :   £',
+	        filteredBank.totalCash(),
+	        ' '
+	      ),
+	      React.createElement(
+	        'table',
+	        null,
+	        React.createElement(
+	          'thead',
+	          null,
+	          React.createElement(
+	            'tr',
+	            null,
+	            React.createElement(
+	              'th',
+	              null,
+	              'Account Holder'
+	            ),
+	            React.createElement(
+	              'th',
+	              null,
+	              'See Account'
+	            )
+	          )
+	        ),
+	        React.createElement(
+	          'tbody',
+	          null,
+	          this.props.accounts.map(this.createRow)
+	        )
+	      ),
+	      React.createElement(AccountDisplay, { account: this.findAccount(), deleteAccount: this.props.deleteAccount, updateDetails: this.props.updateDetails })
+	    );
+	  }
+	});
+	
+	module.exports = AccountsList;
+
+/***/ },
+/* 165 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(5);
+	
+	var AccountDisplay = React.createClass({
+	  displayName: 'AccountDisplay',
+	
+	
+	  getInitialState: function getInitialState() {
+	    return { details: "" };
+	  },
+	
+	  buttonClick: function buttonClick(e) {
+	    var removed = e.target.value;
+	    this.props.deleteAccount(removed);
+	  },
+	
+	  handleForm: function handleForm(e) {
+	    e.preventDefault();
+	    var detail = this.state.details;
+	    this.props.updateDetails(this.props.account.owner, detail);
+	  },
+	
+	  handleDetailChange: function handleDetailChange(e) {
+	    var update = e.target.value;
+	    this.setState({ details: update });
+	  },
+	
+	  render: function render() {
+	    if (this.props.account) {
+	      return React.createElement(
+	        'div',
+	        null,
+	        React.createElement(
+	          'h1',
+	          null,
+	          'AccountDisplay'
+	        ),
+	        React.createElement(
+	          'h3',
+	          null,
+	          'Name: ',
+	          this.props.account.owner,
+	          ' '
+	        ),
+	        React.createElement(
+	          'h3',
+	          null,
+	          'Type: ',
+	          this.props.account.type,
+	          ' '
+	        ),
+	        React.createElement(
+	          'h2',
+	          null,
+	          'Cash: £',
+	          this.props.account.amount,
+	          ' '
+	        ),
+	        React.createElement(
+	          'p',
+	          null,
+	          this.props.account.details
+	        ),
+	        React.createElement(
+	          'form',
+	          { onSubmit: this.handleForm },
+	          React.createElement('input', { type: 'text', placeholder: 'Add Details', value: this.state.details, onChange: this.handleDetailChange }),
+	          React.createElement('input', { type: 'submit' })
+	        ),
+	        React.createElement(
+	          'button',
+	          { value: this.props.account.owner, onClick: this.buttonClick },
+	          'Remove Account'
+	        )
+	      );
+	    } else {
+	      return React.createElement(
+	        'div',
+	        null,
+	        React.createElement(
+	          'h3',
+	          null,
+	          ' Select  Account Above '
+	        )
+	      );
+	    }
+	  }
+	});
+	
+	module.exports = AccountDisplay;
 
 /***/ }
 /******/ ]);
