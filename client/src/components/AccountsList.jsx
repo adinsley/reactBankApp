@@ -47,7 +47,7 @@ var AccountsList = React.createClass({
             {this.props.accounts.map(this.createRow)}
           </tbody>
         </table>
-        <AccountDisplay account={this.findAccount()} deleteAccount={this.props.deleteAccount} updateDetails={this.props.updateDetails}></AccountDisplay>
+        <AccountDisplay account={this.findAccount()} deleteAccount={this.props.deleteAccount} updateDetails={this.props.updateDetails} creditAccount={this.props.creditAccount} debitAccount={this.props.debitAccount} ></AccountDisplay>
       </div>
       )
   }

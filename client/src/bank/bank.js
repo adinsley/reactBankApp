@@ -62,6 +62,25 @@ Bank.prototype = {
       }
     }
     return this.accounts
+  },
+
+  deposit:function(holderName, cashAmount){
+
+    for(var account of this.accounts){
+      if(account.owner == holderName){
+        account.addCash(cashAmount);
+      }
+    }
+    return this.accounts
+  },
+
+  withdrawal:function(holderName, cashAmount){
+    for(var account of this.accounts){
+      if(account.owner == holderName){
+        account.takeCash(cashAmount);
+      }
+    }
+    return this.accounts
   }
 
 }

@@ -51,6 +51,14 @@ var BankBox = React.createClass({
   updateDetails:function(holderName, details){
     this.setState({accounts:bank.updateDetails(holderName, details)})
   },
+
+  creditAccount:function(holderName, deposit){
+    this.setState({accounts:bank.deposit(holderName, deposit)})
+  },
+
+  debitAccount:function(holderName, withdrawal){
+    this.setState({accounts: bank.withdrawal(holderName, withdrawal)})
+  },
   
   render:function(){
     return(
@@ -58,7 +66,7 @@ var BankBox = React.createClass({
         <h1>React BankBox</h1>
         <button onClick={this.buttonClick}>Pay Interest</button>
         <AccountSelect types={ this.getAccountType() } changeAccountType={this.changeAccountType}></AccountSelect>
-        <AccountsList type={this.state.type} accounts={this.filterAccounts()} deleteAccount={this.deleteAccount} updateDetails={this.updateDetails}></AccountsList>
+        <AccountsList type={this.state.type} accounts={this.filterAccounts()} deleteAccount={this.deleteAccount} updateDetails={this.updateDetails} creditAccount={this.creditAccount} debitAccount={this.debitAccount}></AccountsList>
       </div>
       )
   }

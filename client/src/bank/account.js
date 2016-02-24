@@ -5,4 +5,15 @@ var Account = function(params){
   this.details = "";
 };
 
+Account.prototype = {
+  addCash:function(deposit){
+    this.amount +=deposit;
+  },
+  takeCash:function(withdrawal){
+    this.amount -= withdrawal;
+  }
+
+}
+
+
 module.exports = Account;

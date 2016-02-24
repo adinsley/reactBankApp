@@ -265,6 +265,69 @@
 	    }
 	
 	    return this.accounts;
+	  },
+	
+	  deposit: function deposit(holderName, cashAmount) {
+	    var _iteratorNormalCompletion6 = true;
+	    var _didIteratorError6 = false;
+	    var _iteratorError6 = undefined;
+	
+	    try {
+	
+	      for (var _iterator6 = this.accounts[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+	        var account = _step6.value;
+	
+	        if (account.owner == holderName) {
+	          account.addCash(cashAmount);
+	        }
+	      }
+	    } catch (err) {
+	      _didIteratorError6 = true;
+	      _iteratorError6 = err;
+	    } finally {
+	      try {
+	        if (!_iteratorNormalCompletion6 && _iterator6.return) {
+	          _iterator6.return();
+	        }
+	      } finally {
+	        if (_didIteratorError6) {
+	          throw _iteratorError6;
+	        }
+	      }
+	    }
+	
+	    return this.accounts;
+	  },
+	
+	  withdrawal: function withdrawal(holderName, cashAmount) {
+	    var _iteratorNormalCompletion7 = true;
+	    var _didIteratorError7 = false;
+	    var _iteratorError7 = undefined;
+	
+	    try {
+	      for (var _iterator7 = this.accounts[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
+	        var account = _step7.value;
+	
+	        if (account.owner == holderName) {
+	          account.takeCash(cashAmount);
+	        }
+	      }
+	    } catch (err) {
+	      _didIteratorError7 = true;
+	      _iteratorError7 = err;
+	    } finally {
+	      try {
+	        if (!_iteratorNormalCompletion7 && _iterator7.return) {
+	          _iterator7.return();
+	        }
+	      } finally {
+	        if (_didIteratorError7) {
+	          throw _iteratorError7;
+	        }
+	      }
+	    }
+	
+	    return this.accounts;
 	  }
 	
 	};
@@ -282,6 +345,16 @@
 	  this.amount = params.amount;
 	  this.type = params.type;
 	  this.details = "";
+	};
+	
+	Account.prototype = {
+	  addCash: function addCash(deposit) {
+	    this.amount += deposit;
+	  },
+	  takeCash: function takeCash(withdrawal) {
+	    this.amount -= withdrawal;
+	  }
+	
 	};
 	
 	module.exports = Account;
@@ -395,6 +468,14 @@
 	    this.setState({ accounts: bank.updateDetails(holderName, details) });
 	  },
 	
+	  creditAccount: function creditAccount(holderName, deposit) {
+	    this.setState({ accounts: bank.deposit(holderName, deposit) });
+	  },
+	
+	  debitAccount: function debitAccount(holderName, withdrawal) {
+	    this.setState({ accounts: bank.withdrawal(holderName, withdrawal) });
+	  },
+	
 	  render: function render() {
 	    return React.createElement(
 	      'div',
@@ -410,7 +491,7 @@
 	        'Pay Interest'
 	      ),
 	      React.createElement(AccountSelect, { types: this.getAccountType(), changeAccountType: this.changeAccountType }),
-	      React.createElement(AccountsList, { type: this.state.type, accounts: this.filterAccounts(), deleteAccount: this.deleteAccount, updateDetails: this.updateDetails })
+	      React.createElement(AccountsList, { type: this.state.type, accounts: this.filterAccounts(), deleteAccount: this.deleteAccount, updateDetails: this.updateDetails, creditAccount: this.creditAccount, debitAccount: this.debitAccount })
 	    );
 	  }
 	
@@ -20198,7 +20279,7 @@
 	          this.props.accounts.map(this.createRow)
 	        )
 	      ),
-	      React.createElement(AccountDisplay, { account: this.findAccount(), deleteAccount: this.props.deleteAccount, updateDetails: this.props.updateDetails })
+	      React.createElement(AccountDisplay, { account: this.findAccount(), deleteAccount: this.props.deleteAccount, updateDetails: this.props.updateDetails, creditAccount: this.props.creditAccount, debitAccount: this.props.debitAccount })
 	    );
 	  }
 	});
@@ -20218,7 +20299,7 @@
 	
 	
 	  getInitialState: function getInitialState() {
-	    return { details: "" };
+	    return { details: "", addCash: null, debitCash: null };
 	  },
 	
 	  buttonClick: function buttonClick(e) {
@@ -20235,6 +20316,30 @@
 	  handleDetailChange: function handleDetailChange(e) {
 	    var update = e.target.value;
 	    this.setState({ details: update });
+	  },
+	
+	  submitDebitCash: function submitDebitCash(e) {
+	    e.preventDefault();
+	    var newCash = parseInt(this.state.debitCash);
+	    console.log(newCash);
+	    this.props.debitAccount(this.props.account.owner, newCash);
+	  },
+	
+	  handleDebitCash: function handleDebitCash(e) {
+	    var debittedCash = e.target.value;
+	    this.setState({ debitCash: debittedCash });
+	  },
+	
+	  submitAddCash: function submitAddCash(e) {
+	    e.preventDefault();
+	    var newCash = parseInt(this.state.addCash);
+	    console.log(newCash);
+	    this.props.creditAccount(this.props.account.owner, newCash);
+	  },
+	
+	  handleAddCash: function handleAddCash(e) {
+	    var addedCash = e.target.value;
+	    this.setState({ addCash: addedCash });
 	  },
 	
 	  render: function render() {
@@ -20272,6 +20377,18 @@
 	          'p',
 	          null,
 	          this.props.account.details
+	        ),
+	        React.createElement(
+	          'form',
+	          { onSubmit: this.submitAddCash },
+	          React.createElement('input', { type: 'text', placeholder: 'Add Cash', value: this.state.addCash, onChange: this.handleAddCash }),
+	          React.createElement('input', { type: 'submit' })
+	        ),
+	        React.createElement(
+	          'form',
+	          { onSubmit: this.submitDebitCash },
+	          React.createElement('input', { type: 'text', placeholder: 'Debit Cash', value: this.state.debitCash, onChange: this.handleDebitCash }),
+	          React.createElement('input', { type: 'submit' })
 	        ),
 	        React.createElement(
 	          'form',

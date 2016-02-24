@@ -3,7 +3,7 @@ var React = require('react');
 var AccountDisplay = React.createClass({
 
   getInitialState:function(){
-    return{ details:"" };
+    return{ details:"", addCash:null, debitCash:null };
   },
 
   buttonClick:function(e){
@@ -18,8 +18,32 @@ var AccountDisplay = React.createClass({
   },
 
   handleDetailChange:function(e){
-    var update = e.target.value
+    var update = e.target.value;
     this.setState({details:update})
+  },
+
+  submitDebitCash:function(e){
+    e.preventDefault();
+    var newCash = parseInt(this.state.debitCash);
+    console.log(newCash)
+    this.props.debitAccount(this.props.account.owner, newCash)
+  },
+
+  handleDebitCash: function(e){
+    var debittedCash = e.target.value;
+    this.setState({debitCash:debittedCash});
+  },
+
+  submitAddCash:function(e){
+    e.preventDefault();
+    var newCash = parseInt(this.state.addCash);
+    console.log(newCash)
+    this.props.creditAccount(this.props.account.owner, newCash)
+   },
+
+  handleAddCash:function(e){
+    var addedCash = e.target.value;
+    this.setState({addCash:addedCash})
   },
 
   render:function(){
@@ -31,6 +55,18 @@ var AccountDisplay = React.createClass({
         <h3>Type: {this.props.account.type} </h3>
         <h2>Cash: £{this.props.account.amount} </h2>
         <p>{this.props.account.details}</p>
+
+        <form onSubmit={this.submitAddCash}>
+          <input type='text' placeholder='Add Cash' value={this.state.addCash} onChange={this.handleAddCash}></input>
+          <input type='submit'></input>
+        </form>
+
+
+        <form onSubmit={this.submitDebitCash}>
+          <input type='text' placeholder='Debit Cash' value={this.state.debitCash} onChange={this.handleDebitCash}></input>
+          <input type='submit'></input>
+        </form>
+
         <form onSubmit={this.handleForm}>
           <input type='text' placeholder='Add Details' value={this.state.details} onChange={this.handleDetailChange}></input>
           <input type='submit'></input>
