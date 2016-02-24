@@ -8,7 +8,7 @@ var AccountsList = require('./AccountsList');
 
 var bank = new Bank;
 for(var account of sampleAccounts){
-  var newAccount = new Account(account)
+  var newAccount = new Account(account.owner, account.amount, account.type)
   bank.addAccount(newAccount);
 }
 

@@ -46,6 +46,30 @@ var AccountDisplay = React.createClass({
     this.setState({addCash:addedCash})
   },
 
+  createTransaction:function(){
+  if(this.props.account.transactions){
+ return this.props.account.transactions.map(function(object, index){
+      
+
+    return (
+      <tr>
+         <td>{index + 1}</td>
+         <td>{object.type}</td>
+         <td>{object.amount}</td>
+         <td>{object.newTotal}</td>
+
+     </tr> 
+      )
+    })
+  }else{
+    return (
+      <tr>
+      <td>No transactions</td>
+      </tr>
+    )
+  }
+},
+
   render:function(){
   if(this.props.account){
     return(
@@ -55,6 +79,20 @@ var AccountDisplay = React.createClass({
         <h3>Type: {this.props.account.type} </h3>
         <h2>Cash: £{this.props.account.amount} </h2>
         <p>{this.props.account.details}</p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>No.</th>
+              <th>Type</th>
+              <th>Amount</th>
+              <th>Total</th>
+             </tr> 
+          </thead>
+          <tbody>
+            {this.createTransaction()}
+          </tbody>
+        </table>
 
         <form onSubmit={this.submitAddCash}>
           <input type='text' placeholder='Add Cash' value={this.state.addCash} onChange={this.handleAddCash}></input>

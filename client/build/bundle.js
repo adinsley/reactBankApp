@@ -340,19 +340,25 @@
 
 	"use strict";
 	
-	var Account = function Account(params) {
-	  this.owner = params.owner;
-	  this.amount = params.amount;
-	  this.type = params.type;
-	  this.details = "";
+	var Account = function Account(owner, amount, type) {
+	  this.owner = owner;
+	  this.amount = amount;
+	  this.type = type;
+	  this.transactions = [];
+	  this.details = "OK";
 	};
 	
 	Account.prototype = {
 	  addCash: function addCash(deposit) {
 	    this.amount += deposit;
+	    var newTransaction = { type: "Credit", amount: deposit, newTotal: this.amount };
+	    this.transactions.push(newTransaction);
 	  },
+	
 	  takeCash: function takeCash(withdrawal) {
 	    this.amount -= withdrawal;
+	    var newTransaction = { type: "Debit", amount: withdrawal, newTotal: this.amount };
+	    this.transactions.push(newTransaction);
 	  }
 	
 	};
@@ -409,7 +415,7 @@
 	  for (var _iterator = sampleAccounts[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
 	    var account = _step.value;
 	
-	    var newAccount = new Account(account);
+	    var newAccount = new Account(account.owner, account.amount, account.type);
 	    bank.addAccount(newAccount);
 	  }
 	} catch (err) {
@@ -20342,6 +20348,48 @@
 	    this.setState({ addCash: addedCash });
 	  },
 	
+	  createTransaction: function createTransaction() {
+	    if (this.props.account.transactions) {
+	      return this.props.account.transactions.map(function (object, index) {
+	
+	        return React.createElement(
+	          'tr',
+	          null,
+	          React.createElement(
+	            'td',
+	            null,
+	            index + 1
+	          ),
+	          React.createElement(
+	            'td',
+	            null,
+	            object.type
+	          ),
+	          React.createElement(
+	            'td',
+	            null,
+	            object.amount
+	          ),
+	          React.createElement(
+	            'td',
+	            null,
+	            object.newTotal
+	          )
+	        );
+	      });
+	    } else {
+	      return React.createElement(
+	        'tr',
+	        null,
+	        React.createElement(
+	          'td',
+	          null,
+	          'No transactions'
+	        )
+	      );
+	    }
+	  },
+	
 	  render: function render() {
 	    if (this.props.account) {
 	      return React.createElement(
@@ -20377,6 +20425,43 @@
 	          'p',
 	          null,
 	          this.props.account.details
+	        ),
+	        React.createElement(
+	          'table',
+	          null,
+	          React.createElement(
+	            'thead',
+	            null,
+	            React.createElement(
+	              'tr',
+	              null,
+	              React.createElement(
+	                'th',
+	                null,
+	                'No.'
+	              ),
+	              React.createElement(
+	                'th',
+	                null,
+	                'Type'
+	              ),
+	              React.createElement(
+	                'th',
+	                null,
+	                'Amount'
+	              ),
+	              React.createElement(
+	                'th',
+	                null,
+	                'Total'
+	              )
+	            )
+	          ),
+	          React.createElement(
+	            'tbody',
+	            null,
+	            this.createTransaction()
+	          )
 	        ),
 	        React.createElement(
 	          'form',
