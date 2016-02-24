@@ -1,0 +1,47 @@
+body {
+  background-color: tomato;
+  width: 100%;
+}
+
+#app {
+  text-align: center;
+  font-family: 'Montserrat';
+}
+
+#mainTitle {
+  color: white;
+  text-shadow: 2px 2px #ff0000;
+
+}
+
+table {
+  margin: 0 auto;
+  width: 90%;
+  background-color: white;
+}
+
+thead {
+ border-bottom: 1px solid #e5e5e5;
+}
+
+
+th, td {
+ height: 35px;
+ font-size: 15px;
+ font-weight: 100;
+ text-align: center;
+ padding: 0 10px
+}
+
+tbody tr:nth-child(even) {
+ background-color: gold;
+}
+
+tbody tr:hover {
+ background-color: red;
+ color: white;
+}
+
+
+
+

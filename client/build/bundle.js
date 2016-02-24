@@ -488,16 +488,16 @@
 	      null,
 	      React.createElement(
 	        'h1',
-	        null,
+	        { id: 'mainTitle' },
 	        'React BankBox'
 	      ),
+	      React.createElement(AccountSelect, { types: this.getAccountType(), changeAccountType: this.changeAccountType }),
+	      React.createElement(AccountsList, { type: this.state.type, accounts: this.filterAccounts(), deleteAccount: this.deleteAccount, updateDetails: this.updateDetails, creditAccount: this.creditAccount, debitAccount: this.debitAccount }),
 	      React.createElement(
 	        'button',
 	        { onClick: this.buttonClick },
 	        'Pay Interest'
-	      ),
-	      React.createElement(AccountSelect, { types: this.getAccountType(), changeAccountType: this.changeAccountType }),
-	      React.createElement(AccountsList, { type: this.state.type, accounts: this.filterAccounts(), deleteAccount: this.deleteAccount, updateDetails: this.updateDetails, creditAccount: this.creditAccount, debitAccount: this.debitAccount })
+	      )
 	    );
 	  }
 	
@@ -20137,6 +20137,11 @@
 	      'div',
 	      null,
 	      React.createElement(
+	        'h3',
+	        null,
+	        'Select type of Account'
+	      ),
+	      React.createElement(
 	        'select',
 	        { onChange: this.handleChange },
 	        this.props.types.map(this.createOption)
@@ -20424,6 +20429,7 @@
 	        React.createElement(
 	          'p',
 	          null,
+	          'Account Info - ',
 	          this.props.account.details
 	        ),
 	        React.createElement(

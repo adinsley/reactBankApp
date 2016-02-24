@@ -63,10 +63,10 @@ var BankBox = React.createClass({
   render:function(){
     return(
       <div>
-        <h1>React BankBox</h1>
-        <button onClick={this.buttonClick}>Pay Interest</button>
+        <h1 id="mainTitle">React BankBox</h1>
         <AccountSelect types={ this.getAccountType() } changeAccountType={this.changeAccountType}></AccountSelect>
         <AccountsList type={this.state.type} accounts={this.filterAccounts()} deleteAccount={this.deleteAccount} updateDetails={this.updateDetails} creditAccount={this.creditAccount} debitAccount={this.debitAccount}></AccountsList>
+        <button onClick={this.buttonClick}>Pay Interest</button>
       </div>
       )
   }

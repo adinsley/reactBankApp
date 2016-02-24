@@ -16,6 +16,7 @@ var AccountSelect = React.createClass({
 
     return(
       <div>
+        <h3>Select type of Account</h3>
         <select onChange={this.handleChange}>
           {this.props.types.map(this.createOption)}
         </select>

@@ -78,7 +78,7 @@ var AccountDisplay = React.createClass({
         <h3>Name: {this.props.account.owner} </h3>
         <h3>Type: {this.props.account.type} </h3>
         <h2>Cash: £{this.props.account.amount} </h2>
-        <p>{this.props.account.details}</p>
+        <p>Account Info - {this.props.account.details}</p>
 
         <table>
           <thead>
